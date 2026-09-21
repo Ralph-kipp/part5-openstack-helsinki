@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import BlogForm from './components/BlogForm'
 import Login from './components/Login'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
@@ -11,9 +12,6 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
-  const [title, setTitle] = useState("")
-  const [author, setAuthor] = useState("")
-  const [url, setUrl] = useState("")
 
   useEffect(() => {
     if (user) {
@@ -58,26 +56,10 @@ const handleLogout = () => {
   setBlogs([])
 }
 
-const handleTitleChange = (event) => {
-  setTitle(event.target.value)
-}
-
-const handleAuthorChange = (event) => {
-  setAuthor(event.target.value)
-}
-
-const handleUrlChange = (event) => {
-  setUrl(event.target.value)
-}
-
-const handleCreateBlog = async (event) => {
-  event.preventDefault()
+const handleCreateBlog = async (blogObject) => {
   try {
-    const newBlog = await blogService.create({ title, author, url })
+    const newBlog = await blogService.create(blogObject)
     setBlogs(blogs.concat(newBlog))
-    setTitle('')
-    setAuthor('')
-    setUrl('')
     notify(`a new blog ${newBlog.title} by ${newBlog.author} added`)
   } catch {
     notify('creating the blog failed')
@@ -115,37 +97,7 @@ const handleCreateBlog = async (event) => {
         <Blog key={blog.id} blog={blog} />
       )}
 
-      <h3>create new</h3>
-      <form onSubmit={handleCreateBlog}>
-        <label>
-          title
-          <input
-            type="text"
-            name="Title"
-            value={title}
-            onChange={handleTitleChange}
-          />
-        </label>
-        <label>
-          author
-          <input
-            type="text"
-            name="Author"
-            value={author}
-            onChange={handleAuthorChange}
-          />
-        </label>
-        <label>
-          URL
-          <input
-            type="text"
-            name="url"
-            value={url}
-            onChange={handleUrlChange}
-          />
-        </label>
-        <button type="submit">create</button>
-      </form>
+      <BlogForm createBlog={handleCreateBlog} />
     </div>
   )
 }
