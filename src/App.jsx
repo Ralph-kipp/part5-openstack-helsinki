@@ -11,6 +11,9 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
+  const [title, setTitle] = useState("")
+  const [author, setAuthor] = useState("")
+  const [url, setUrl] = useState("")
 
   useEffect(() => {
     if (user) {
@@ -43,7 +46,7 @@ const handleLogin = async (event) => {
     setUser(loggedUser)
     setUsername('')
     setPassword('')
-  } catch (error) {
+  } catch {
     notify('Wrong username or password')
   }
 }
@@ -55,6 +58,31 @@ const handleLogout = () => {
   setBlogs([])
 }
 
+const handleTitleChange = (event) => {
+  setTitle(event.target.value)
+}
+
+const handleAuthorChange = (event) => {
+  setAuthor(event.target.value)
+}
+
+const handleUrlChange = (event) => {
+  setUrl(event.target.value)
+}
+
+const handleCreateBlog = async (event) => {
+  event.preventDefault()
+  try {
+    const newBlog = await blogService.create({ title, author, url })
+    setBlogs(blogs.concat(newBlog))
+    setTitle('')
+    setAuthor('')
+    setUrl('')
+    notify(`a new blog ${newBlog.title} by ${newBlog.author} added`)
+  } catch {
+    notify('creating the blog failed')
+  }
+}
 
   if (!user) {
     return (
@@ -76,6 +104,8 @@ const handleLogout = () => {
     <div>
       <h2>blogs</h2>
 
+      <Notification message={errorMessage} />
+
       <p>
         {user.name} logged in
         <button onClick={handleLogout}>logout</button>
@@ -84,6 +114,38 @@ const handleLogout = () => {
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
+
+      <h3>create new</h3>
+      <form onSubmit={handleCreateBlog}>
+        <label>
+          title
+          <input
+            type="text"
+            name="Title"
+            value={title}
+            onChange={handleTitleChange}
+          />
+        </label>
+        <label>
+          author
+          <input
+            type="text"
+            name="Author"
+            value={author}
+            onChange={handleAuthorChange}
+          />
+        </label>
+        <label>
+          URL
+          <input
+            type="text"
+            name="url"
+            value={url}
+            onChange={handleUrlChange}
+          />
+        </label>
+        <button type="submit">create</button>
+      </form>
     </div>
   )
 }
