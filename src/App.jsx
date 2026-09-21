@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import Login from './components/Login'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -12,6 +13,7 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
+  const blogFormRef = useRef()
 
   useEffect(() => {
     if (user) {
@@ -60,6 +62,7 @@ const handleCreateBlog = async (blogObject) => {
   try {
     const newBlog = await blogService.create(blogObject)
     setBlogs(blogs.concat(newBlog))
+    blogFormRef.current.toggleVisibility()
     notify(`a new blog ${newBlog.title} by ${newBlog.author} added`)
   } catch {
     notify('creating the blog failed')
@@ -70,13 +73,15 @@ const handleCreateBlog = async (blogObject) => {
     return (
       <div>
         <Notification message={errorMessage} />
-        <Login
-          username={username}
-          password={password}
-          handleUsernameChange={({ target }) => setUsername(target.value)}
-          handlePasswordChange={({ target }) => setPassword(target.value)}
-          handleSubmit={handleLogin}
-        />
+        <Togglable buttonLabel="log in">
+          <Login
+            username={username}
+            password={password}
+            handleUsernameChange={({ target }) => setUsername(target.value)}
+            handlePasswordChange={({ target }) => setPassword(target.value)}
+            handleSubmit={handleLogin}
+          />
+        </Togglable>
       </div>
     )
   }
@@ -97,7 +102,9 @@ const handleCreateBlog = async (blogObject) => {
         <Blog key={blog.id} blog={blog} />
       )}
 
-      <BlogForm createBlog={handleCreateBlog} />
+      <Togglable buttonLabel="new blog" ref={blogFormRef}>
+        <BlogForm createBlog={handleCreateBlog} />
+      </Togglable>
     </div>
   )
 }
