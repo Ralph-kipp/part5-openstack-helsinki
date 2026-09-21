@@ -69,6 +69,23 @@ const handleCreateBlog = async (blogObject) => {
   }
 }
 
+const handleLike = async (blog) => {
+  const updatedBlog = {
+    user: blog.user ? blog.user.id : undefined,
+    likes: blog.likes + 1,
+    author: blog.author,
+    title: blog.title,
+    url: blog.url
+  }
+
+  try {
+    const returnedBlog = await blogService.update(blog.id, updatedBlog)
+    setBlogs(blogs.map(b => b.id === blog.id ? returnedBlog : b))
+  } catch {
+    notify('updating the blog failed')
+  }
+}
+
   if (!user) {
     return (
       <div>
@@ -99,7 +116,7 @@ const handleCreateBlog = async (blogObject) => {
       </p>
 
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} handleLike={handleLike} />
       )}
 
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
