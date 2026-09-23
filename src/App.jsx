@@ -129,7 +129,7 @@ const handleLike = async (blog) => {
       {blogs
         .sort((a, b) => b.likes - a.likes)
         .map(blog =>
-        <Blog key={blog.id} blog={blog} handleLike={handleLike} handleDelete={handleDelete} />
+        <Blog key={blog.id} blog={blog} user={user} handleLike={handleLike} handleDelete={handleDelete} />
       )}
 
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
