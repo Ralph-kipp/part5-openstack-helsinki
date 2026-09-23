@@ -80,7 +80,7 @@ const handleLike = async (blog) => {
 
   try {
     const returnedBlog = await blogService.update(blog.id, updatedBlog)
-    setBlogs(blogs.map(b => b.id === blog.id ? { ...returnedBlog, user: blog.user } : b))   
+    setBlogs(blogs.map(b => b.id === blog.id ? { ...returnedBlog, user: blog.user } : b) )   
   } catch {
     notify('updating the blog failed')
   }
@@ -115,7 +115,9 @@ const handleLike = async (blog) => {
         <button onClick={handleLogout}>logout</button>
       </p>
 
-      {blogs.map(blog =>
+      {blogs
+        .sort((a, b) => b.likes - a.likes)
+        .map(blog =>
         <Blog key={blog.id} blog={blog} handleLike={handleLike} />
       )}
 
