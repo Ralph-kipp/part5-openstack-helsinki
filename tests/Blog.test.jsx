@@ -13,12 +13,14 @@ const blog = {
 }
 
 test('<Blog /> shows title and author, but not url or likes, by default', () => {
-  render(<Blog blog={blog} handleLike={() => {}} />)
+  const { container } = render(<Blog blog={blog} handleLike={() => {}} />)
 
-  expect(screen.getByText('Testing forms', { exact: false })).toBeInTheDocument()
-  expect(screen.getByText('Matti Luukkainen', { exact: false })).toBeInTheDocument()
-  expect(screen.queryByText('http://example.com')).not.toBeInTheDocument()
-  expect(screen.queryByText('likes 5')).not.toBeInTheDocument()
+  const titleAuthor = container.querySelector('.blogTitleAuthor')
+  expect(titleAuthor).toHaveTextContent('Testing forms')
+  expect(titleAuthor).toHaveTextContent('Matti Luukkainen')
+
+  expect(container.querySelector('.blogUrl')).toBeNull()
+  expect(container.querySelector('.blogLikes')).toBeNull()
 })
 
 test('<Blog /> shows url and likes after the view button is clicked', async () => {

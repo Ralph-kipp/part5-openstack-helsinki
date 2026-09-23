@@ -10,13 +10,13 @@ const Blog = ({ blog, handleLike, handleDelete, user }) => {
   const showDelete = user && blog.user && user.username === blog.user.username
 
   return (
-    <div>
-      {blog.title} {blog.author}
+    <div className="blog">
+      <span className="blogTitleAuthor">{blog.title} {blog.author}</span>
       <button onClick={toggleVisibility}>{visible ? 'hide' : 'view'}</button>
       {visible && (
-        <div>
-          <div>{blog.url}</div>
-          <div>
+        <div className="blogDetails">
+          <div className="blogUrl">{blog.url}</div>
+          <div className="blogLikes">
             likes {blog.likes}
             <button onClick={() => handleLike(blog)}>like</button>
           </div>
