@@ -103,6 +103,17 @@ const handleLike = async (blog) => {
     )
   }
 
+  const handleDelete = async (blog) => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+      try {
+        await blogService.remove(blog.id)
+        setBlogs(blogs.filter(b => b.id !== blog.id))
+        notify(`Deleted blog ${blog.title} by ${blog.author}`)
+      } catch  {
+        notify('Deleting the blog failed')
+      }
+    }
+  }
 
   return (
     <div>
@@ -118,7 +129,7 @@ const handleLike = async (blog) => {
       {blogs
         .sort((a, b) => b.likes - a.likes)
         .map(blog =>
-        <Blog key={blog.id} blog={blog} handleLike={handleLike} />
+        <Blog key={blog.id} blog={blog} handleLike={handleLike} handleDelete={handleDelete} />
       )}
 
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
