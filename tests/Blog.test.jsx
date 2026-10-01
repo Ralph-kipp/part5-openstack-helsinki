@@ -41,7 +41,6 @@ test('<Blog /> calls handleLike with the blog when the like button is clicked tw
 
   await user.click(likeButton)
   await user.click(likeButton)
-
   expect(handleLike.mock.calls).toHaveLength(2)
   expect(handleLike.mock.calls[0][0]).toEqual(blog)
 })
