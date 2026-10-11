@@ -27,6 +27,12 @@ const allBlogs = (page) =>
 // the element holding a single blog's title, author and (when expanded) details
 const blogLocator = (page, title) => allBlogs(page).filter({ hasText: title })
 
+// create a user through the API and fail with the server's message if it is rejected
+const createUser = async (request, user) => {
+  const response = await request.post('http://localhost:3003/api/users', { data: user })
+  expect(response.status(), `creating user ${user.username} failed: ${await response.text()}`).toBe(201)
+}
+
 const likeBlog = async (page, title, expectedLikes) => {
   await blogLocator(page, title).getByRole('button', { name: 'like', exact: true }).click()
   await expect(blogLocator(page, title)).toContainText(`likes ${expectedLikes}`)
@@ -38,12 +44,10 @@ describe('Blog app', () => {
     // fail fast if the backend is not running in test mode, so a real DB is never touched
     const reset = await request.post('http://localhost:3003/api/testing/reset')
     expect(reset.status()).toBe(204)
-    await request.post('http://localhost:3003/api/users', {
-      data: {
-        username: 'ralph',
-        name: 'ralph',
-        password: 'testpassword123',
-      },
+    await createUser(request, {
+      username: 'ralph',
+      name: 'ralph',
+      password: 'testpassword123',
     })
     await page.goto('http://localhost:5173')
 
@@ -117,25 +121,16 @@ describe('Blog app', () => {
       await createBlog(page, 'Ralphs blog', 'Test Author', 'http://localhost:5173/ralph')
 
       // creator sees the delete button
-    const otherUsersBlog = blogLocator(page, 'Ralphs blog')
-    const viewButton = otherUsersBlog.getByRole('button', { name: 'view' })
-
-    if (await viewButton.isVisible()) {
-      await viewButton.click()
-    }
-
-    await expect(otherUsersBlog).toContainText('likes 0')
-    await expect(
-      otherUsersBlog.getByRole('button', { name: 'delete' })
-    ).toHaveCount(0)
+      const ralphsBlog = blogLocator(page, 'Ralphs blog')
+      await ralphsBlog.getByRole('button', { name: 'view' }).click()
+      await expect(ralphsBlog).toContainText('likes 0')
+      await expect(ralphsBlog.getByRole('button', { name: 'delete' })).toBeVisible()
 
       // log out and log in as a different user
-      await request.post('http://localhost:3003/api/users', {
-        data: {
-          username: 'other',
-          name: 'other user',
-          password: 'otherpassword123',
-        },
+      await createUser(request, {
+        username: 'other',
+        name: 'other user',
+        password: 'otherpassword123',
       })
       await page.getByRole('button', { name: 'logout' }).click()
       await loginWith(page, 'other', 'otherpassword123')
