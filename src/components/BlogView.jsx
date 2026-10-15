@@ -1,19 +1,31 @@
+import { Card, CardContent, CardActions, Typography, Button, Link as MuiLink } from '@mui/material'
+
 const BlogView = ({ blog, user, handleLike, handleDelete }) => {
   if (!blog) return null                  // blogs not loaded yet (e.g. after a page reload)
 
   const isCreator = user && blog.user && blog.user.username === user.username
 
   return (
-    <div>
-      <h3>{blog.title} {blog.author}</h3>
-      <div><a href={blog.url}>{blog.url}</a></div>
-      <div>
-        likes {blog.likes}{' '}
-        {user && <button onClick={() => handleLike(blog)}>like</button>}
-      </div>
-      {blog.user && <div>added by {blog.user.name}</div>}
-      {isCreator && <button onClick={() => handleDelete(blog)}>delete</button>}
-    </div>
+    <Card style={{ marginTop: 20 }}>
+      <CardContent>
+        <Typography variant="h4">{blog.title} {blog.author}</Typography>
+        <Typography>
+          <MuiLink href={blog.url}>{blog.url}</MuiLink>
+        </Typography>
+        <Typography>likes {blog.likes}</Typography>
+        {blog.user && (
+          <Typography color="text.secondary">added by {blog.user.name}</Typography>
+        )}
+      </CardContent>
+      {user && (
+        <CardActions>
+          <Button variant="contained" onClick={() => handleLike(blog)}>like</Button>
+          {isCreator && (
+            <Button color="error" onClick={() => handleDelete(blog)}>delete</Button>
+          )}
+        </CardActions>
+      )}
+    </Card>
   )
 }
 
