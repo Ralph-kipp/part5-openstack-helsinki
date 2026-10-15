@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { TextField, Button } from '@mui/material'
 
 const BlogForm = ({ createBlog }) => {
   const [title, setTitle] = useState('')
@@ -17,34 +18,31 @@ const BlogForm = ({ createBlog }) => {
     <div>
       <h3>create new</h3>
       <form onSubmit={handleSubmit}>
-        <label>
-          title
-          <input
-            type="text"
+        <div>
+          <TextField
+            label="title"
             name="Title"
             value={title}
             onChange={({ target }) => setTitle(target.value)}
           />
-        </label>
-        <label>
-          author
-          <input
-            type="text"
+        </div>
+        <div>
+          <TextField
+            label="author"
             name="Author"
             value={author}
             onChange={({ target }) => setAuthor(target.value)}
           />
-        </label>
-        <label>
-          URL
-          <input
-            type="text"
+        </div>
+        <div>
+          <TextField
+            label="URL"
             name="url"
             value={url}
             onChange={({ target }) => setUrl(target.value)}
           />
-        </label>
-        <button type="submit">create</button>
+        </div>
+        <Button type="submit" variant="contained" style={{ marginTop: 10 }}>create</Button>
       </form>
     </div>
   )

@@ -8,7 +8,7 @@ const NotifyWrapper = () => {
   const [message, setMessage] = useState(null)
 
   const notify = (msg) => {
-    setMessage(msg)
+    setMessage({ text: msg, type: 'success' })
     setTimeout(() => setMessage(null), 5000)
   }
 
